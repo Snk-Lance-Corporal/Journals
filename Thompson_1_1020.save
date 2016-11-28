@@ -1,0 +1,3 @@
+This is a super journal
+git remote add origin https://github.com/Snk-Lance-Corporal/Journals.git
+git push -u origin master
