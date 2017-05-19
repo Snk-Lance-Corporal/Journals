@@ -1,0 +1,351 @@
+		score: 35 
+		I didn't really think that I would need to at the time. 
+		▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+
+		package mostbasicjavafxmove;
+
+import java.util.ArrayList;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
+
+public class Thompson_1_pacman extends Application {
+
+    static Group root;
+    static ArrayList<Rectangle> badblockz = new ArrayList();
+    static ArrayList<Rectangle> walls = new ArrayList();
+    static ArrayList<String> input = new ArrayList<String>();
+    static Pacman pacman;
+    static int counter = 0;
+    static Ghost ghost;
+    static ArrayList<Ghost> ghostz = new ArrayList<Ghost>();
+
+    //static Wall walls = new wall;
+    @Override
+    public void start(Stage primaryStage) {
+
+        primaryStage.setTitle("Text Fonts");
+
+        //g = new Group();
+        root = new Group();
+        Scene scene = new Scene(root, 600, 255, Color.web("BLACK", 1.0));
+
+        primaryStage.setTitle("PacMan");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        for (int i = 0; i < 1; i++) {
+            //                 x     y     w    l
+            walls.add(new Wall(1, 250, 599, 4));     // Bottom Wall
+            walls.add(new Wall(1, 1, 599, 4));     // Top Wall
+            walls.add(new Wall(1, 1, 4, 50));    // Far Left Wall Top
+            walls.add(new Wall(1, 95, 4, 60));    // Far Left Wall Middle
+            walls.add(new Wall(1, 200, 4, 50));    // Far Left Wall Bottom
+            walls.add(new Wall(595, 1, 4, 50));    // Far Right Wall Top
+            walls.add(new Wall(595, 95, 4, 60));    // Far Right Wall Middle
+            walls.add(new Wall(595, 200, 4, 50));    // Far Right Wall Bottom
+            walls.add(new Wall(230, 85, 4, 50));    // Ghost Box Right Wall
+            walls.add(new Wall(320, 85, 4, 50));    // Ghost Box Left Wall
+            walls.add(new Wall(230, 135, 94, 4));     // Ghost Box Bottom Wall
+            walls.add(new Wall(230, 85, 20, 4));     // Ghost Box Top Left Wall
+            walls.add(new Wall(304, 85, 20, 4));     // Ghost Box Top Right Wall
+
+            walls.add(new Wall(330, 170, 40, 4));     // Bottom
+            walls.add(new Wall(370, 124, 4, 50));    // side
+
+            walls.add(new Wall(244, 55, 65, 4));     //bottom
+            walls.add(new Wall(275, 37, 4, 20));    //top
+
+            walls.add(new Wall(180, 170, 40, 4));     //bottom
+            walls.add(new Wall(180, 124, 4, 50));    //side
+
+            walls.add(new Wall(180, 40, 4, 50));
+
+            walls.add(new Wall(370, 40, 4, 50));
+
+            walls.add(new Wall(244, 210, 65, 4));     //bottom 
+            walls.add(new Wall(275, 190, 4, 20));    //top
+
+            walls.add(new Wall(430, 40, 4, 50));    //left
+            walls.add(new Wall(430, 40, 50, 4));    //top   //THE FAR RIGHT SQUARE
+            walls.add(new Wall(480, 40, 4, 50));    //right
+            walls.add(new Wall(430, 90, 54, 4));    //bottom
+
+            walls.add(new Wall(70, 40, 4, 50));    //left
+            walls.add(new Wall(70, 40, 50, 4));    //top   //THE FAR LEFT SQUARE
+            walls.add(new Wall(120, 40, 4, 50));    //right
+            walls.add(new Wall(70, 90, 54, 4));    //bottom
+
+            walls.add(new Wall(70, 210, 80, 4));     //bottom
+            walls.add(new Wall(100, 190, 4, 20));    //top
+
+        }
+
+        pacman = new Pacman();
+
+        pacman.setCenterX(50.0f);
+        pacman.setCenterY(50.0f);
+        pacman.setRadiusX(6.0f);
+        pacman.setRadiusY(6.0f);
+        pacman.setStartAngle(45.0f);
+        pacman.setLength(270.0f);
+        pacman.setType(ArcType.ROUND);
+        pacman.setFill(Color.YELLOW);
+
+        ghostz.add(new Ghost(240, 110));
+        ghostz.add(new Ghost(260, 110));
+        ghostz.add(new Ghost(280, 110));
+        ghostz.add(new Ghost(300, 110));
+
+        // notice the difference in how an ArrayList adds items 
+        //  badblockz.add(rect);
+        //we have created an animation timer --- the class MUST be overwritten - look below 
+        AnimationTimer timer = new MyTimer();
+
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() { ///--------MAKES PACMAN MOVE
+            @Override
+            public void handle(KeyEvent event) {
+
+                String code = event.getCode().toString();
+                //    input.remove( code );
+                if (event.getCode() == KeyCode.RIGHT) { // don't use toString here!!!
+                    pacman.right = true;
+                    pacman.down = false;
+                    pacman.up = false;
+                    pacman.left = false;
+
+                } else if (event.getCode() == KeyCode.LEFT) {
+                    pacman.left = true;
+                    pacman.right = false;
+                    pacman.up = false;
+                    pacman.down = false;
+
+                } else if (event.getCode() == KeyCode.UP) {
+                    pacman.up = true;
+                    pacman.down = false;
+                    pacman.left = false;
+                    pacman.right = false;
+
+                } else if (event.getCode() == KeyCode.DOWN) {
+                    pacman.down = true;
+                    pacman.up = false;
+                    pacman.left = false;
+                    pacman.right = false;
+
+                }
+            }
+        });
+
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT) {
+                    // rectangleVelocity.set(0);
+                }
+
+            }
+        });
+
+        //   try disabling canvas --- notice the difference 
+        //   root.getChildren().add(canvas);
+        //   notice we are manually adding the shape objects to the "root" window
+        //   root.getChildren().add(rect);
+        root.getChildren().add(pacman);
+
+        timer.start();
+        primaryStage.show();
+    }
+
+    ///  vvvvvvvvvvvv   MAIN vvvvvvvvvvv
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    //// ^^^^^^^^^^^  MAIN ^^^^^^^^^^^^^
+    // we create our time here --- to animate 
+    private class MyTimer extends AnimationTimer {
+
+        boolean right = true;
+        boolean movedown = true;
+        //boolean open = true;
+
+        /// handle is defined by the abstract parent class -- it must be redined 
+        /// this is what happens again and again until stop()
+        @Override
+        public void handle(long now) {
+            // You can look at the key presses here as well -- this is one of many. Try others
+            if (input.contains("LEFT")) {
+                pacman.setCenterX(pacman.getCenterX() - 5);
+
+            }
+
+            doHandle();
+        }
+
+        private void doHandle() { //---------MAKES THIS HAPPEN OVER AND OVER
+            pacman.move();
+
+            checkBounds(pacman);
+            if (movedown && pacman.getCenterY() < 0) {
+                pacman.setCenterY(pacman.getCenterY() + 2);
+            }
+            if (!movedown && pacman.getCenterY() > 1) {
+                pacman.setCenterY(pacman.getCenterY() - 2);
+            }
+            for (Ghost g : ghostz) {
+                g.move();
+            }
+        }
+
+        /**
+         * Code to make pac man's mouth open and close. if ( counter < 5 ){
+         *   open == true;
+         * }
+         *
+         * else if ( counter > 5 ){ open == false;
+         */
+    }
+
+    //-------------------------------CLASSES
+    class Wall extends Rectangle {
+
+        public Wall(int x, int y) {
+            this.setX(x);
+            this.setY(y);
+            this.setHeight(200);
+            this.setWidth(100);
+            this.setFill(Color.DARKBLUE);
+            root.getChildren().add(this);
+            walls.add(this);
+        }
+
+        private Wall(int x, int y, int w, int h) {
+            this.setX(x);
+            this.setY(y);
+            this.setHeight(h);
+            this.setWidth(w);
+            this.setFill(Color.DARKBLUE);
+            root.getChildren().add(this);
+            walls.add(this);
+        }
+    }
+
+    class Pacman extends Arc {//------------PACMAN 
+
+        boolean up = false;
+        boolean down = false;
+        boolean right = false;
+        boolean left = false;
+
+        public Pacman(int x, int y) {
+            this.setCenterX(x);
+            this.setCenterY(y);
+            this.setFill(Color.PLUM);
+        }
+
+        public Pacman() {
+            this.setCenterX(50.0f);
+            this.setCenterY(50.0f);
+            this.setRadiusX(3.0f);
+            this.setRadiusY(3.0f);
+            this.setStartAngle(45.0f);
+            this.setLength(270.0f);
+            this.setType(ArcType.ROUND);
+            this.setFill(Color.YELLOW);
+        }
+
+        void move() {
+            if (this.right == true) {
+                this.setCenterX(this.getCenterX() + 3);
+                this.setFill(Color.YELLOW);
+                if (checkBounds(this)) {
+                    this.setLeft();
+                }
+            } else if (this.left == true) {
+                this.setCenterX(this.getCenterX() - 3);
+                this.setFill(Color.YELLOW);
+                if (checkBounds(this)) {
+                    this.setRight();
+                };
+            } else if (this.up == true) {
+                this.setCenterY(this.getCenterY() - 3);
+                this.setFill(Color.YELLOW);
+                if (checkBounds(this)) {
+                    this.setDown();
+                }
+            } else if (this.down == true) {
+                this.setCenterY(this.getCenterY() + 3);
+                this.setFill(Color.YELLOW);
+                if (checkBounds(this)) {
+                    this.setUp();
+                }
+            }
+        }
+
+        void setUp() {
+            this.up = true;
+            this.down = false;
+            this.left = false;
+            this.right = false;
+        }
+
+        void setDown() {
+            this.down = true;
+            this.left = false;
+            this.right = false;
+            this.up = false;
+        }
+
+        void setLeft() {
+            this.left = true;
+            this.right = false;
+            this.up = false;
+            this.down = false;
+        }
+
+        void setRight() {
+            this.right = true;
+            this.left = false;
+            this.up = false;
+            this.down = false;
+        }
+    }
+    //----------------------------------------
+
+    class Ghost extends Rectangle {
+
+        boolean Up, Down, Left, Right;
+
+        public Ghost(int x, int y) {
+
+            this.setX(x);
+            this.setY(y);
+            this.setWidth(13);
+            this.setHeight(13);
+            this.setFill(Color.AQUA);
+
+            this.setUp();
+            root.getChildren().add(this);
+            //walls.add(this);
+        }
+
+        void setUp() {
+            this.Up = true;
+            this.Down = false;
+            this.Left = false;
+            this.Right = false;
+        }
+
+        void setDown() {
+            this.Down = true;
+            this.Left = 
